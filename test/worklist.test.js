@@ -48,3 +48,15 @@ test('WorkList resets when the task changes and ignores duplicates', () => {
   l.forTask('landing page');
   assert.equal(l.keys.length, 0);
 });
+
+test('apps match case-insensitively, browsers never match an app key', () => {
+  const key = workKey({ title: 'Figma', app: 'Figma' });
+  assert.ok(matchesWork({ title: 'Design', app: 'figma' }, key));
+  assert.ok(!matchesWork(chrome('Figma'), key));
+});
+
+test('nothing to remember without a window', () => {
+  assert.equal(workKey(null), null);
+  assert.equal(new WorkList().add(null), null);
+  assert.equal(new WorkList().match(chrome('YouTube')), null);
+});

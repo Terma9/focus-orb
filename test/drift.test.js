@@ -67,3 +67,25 @@ test('next check is pulled forward to the end of the grace window', () => {
   d.verdict(0.9, 4000, 4500);
   assert.equal(d.nextDelay(3000, 4000, 4500), 1650, 'lands exactly when the grace ends (6150)');
 });
+
+test('the next check is never scheduled in the past', () => {
+  const d = make();
+  assert.equal(d.nextDelay(3000, 0, 10_000), 0);
+});
+
+test('no refresh of the line while there is no alert', () => {
+  const d = make();
+  d.verdict(0.9, 0, 0);
+  assert.equal(d.verdict(0.9, 40_000, 40_000).renag, false, 'this one starts the alert instead');
+  assert.equal(d.drifting, true);
+});
+
+test('dismiss ends the alert and clears the streak', () => {
+  const d = make();
+  d.verdict(0.9, 0, 0);
+  d.verdict(0.9, 6000, 6000);
+  d.dismiss(7000);
+  assert.equal(d.drifting, false);
+  assert.equal(d.offCount, 0);
+  assert.equal(d.offSince, null);
+});

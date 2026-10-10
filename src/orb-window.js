@@ -3,7 +3,8 @@ const path = require('path');
 
 const SMALL = 124;
 const MARGIN = 20;
-const PANELS = { setup: [420, 150], summary: [440, 200], consent: [600, 492] };
+const PANELS = { setup: [420, 150], summary: [440, 200] };
+const NOTICE_W = 720; // the privacy notice is centred on screen; its height follows its content
 
 // The one transparent window the orb lives in. Modes:
 //   setup   - task box next to the orb        summary - end-of-Pomodoro card
@@ -81,6 +82,10 @@ class OrbWindow {
       const [w, h] = PANELS[mode];
       return { x: wa.x + wa.width - w - MARGIN, y: wa.y + wa.height - h - MARGIN, width: w, height: h };
     }
+    if (mode === 'consent') {
+      const h = Math.min(wa.height - 40, Math.max(420, this.noticeHeight || 560));
+      return { x: Math.round(wa.x + (wa.width - NOTICE_W) / 2), y: Math.round(wa.y + (wa.height - h) / 2), width: NOTICE_W, height: h };
+    }
     if (mode === 'alert') return { ...wa };
     return { x: wa.x + wa.width - SMALL - MARGIN, y: wa.y + wa.height - SMALL - MARGIN, width: SMALL, height: SMALL };
   }
@@ -112,6 +117,7 @@ class OrbWindow {
     const t0 = Date.now();
     const ease = (t) => 1 - Math.pow(1 - t, 3);
     this.animTimer = setInterval(() => {
+      if (this.win.isDestroyed()) return clearInterval(this.animTimer); // the app quit mid-animation
       const t = Math.min(1, (Date.now() - t0) / ms);
       const k = ease(t);
       const lerp = (a, b) => Math.round(a + (b - a) * k);
@@ -137,6 +143,7 @@ class OrbWindow {
 
   apply(mode) {
     clearTimeout(this.handshakeTimer);
+    if (!this.win || this.win.isDestroyed()) return; // e.g. a handshake timeout firing while the app quits
     this.pendingMode = null;
     const was = this.mode;
     this.mode = mode;

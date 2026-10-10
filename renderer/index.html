@@ -102,32 +102,42 @@
   #modeChip:hover { background: rgba(255,255,255,.16); }
   #modeChip.privacy { color: #3de0a8; border-color: rgba(61,224,168,.45); }
 
-  /* ---------- privacy notice (every app start) ---------- */
-  #consent { position: absolute; left: 136px; right: 10px; top: 10px; bottom: 10px; display: none; box-sizing: border-box;
-    flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--glass);
-    border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(12px); animation: cardIn .5s cubic-bezier(.2,1.3,.4,1); }
+  /* ---------- privacy notice (first start, or "Details"): centred, large, solid ---------- */
+  body.consent #orb { left: calc(50% - 46px); top: 14px; width: 92px; height: 92px; }
+  #consent { position: absolute; left: 16px; right: 16px; top: 116px; display: none; box-sizing: border-box;
+    flex-direction: column; gap: 14px; padding: 22px 26px 20px; border-radius: 22px; background: #17142a;
+    border: 1px solid rgba(255,255,255,.14); box-shadow: 0 18px 50px rgba(0,0,0,.55); color: #f4f2ff;
+    animation: cardIn .5s cubic-bezier(.2,1.3,.4,1); }
   body.consent #consent { display: flex; }
-  #consent .kicker { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  #consent h2 { margin: -2px 0 0; font-size: 17px; font-weight: 700; color: var(--ink); }
-  #consent p, #consent li { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
-  #consent b { font-weight: 650; }
-  #consent ul { margin: 0; padding-left: 17px; display: flex; flex-direction: column; gap: 3px; }
-  #consent li::marker { color: #ffb03d; }
-  #consent .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px; }
-  #consent .opt { position: relative; display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 8px 11px;
-    border-radius: 12px; color: var(--ink); background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.14); }
-  #consent .opt:hover { background: rgba(255,255,255,.12); border-color: var(--c1); }
-  #consent .opt b { font-size: 14px; margin-bottom: 2px; }
-  #consent .opt span { font-size: 11.5px; font-weight: 400; color: var(--muted); }
-  #consent .opt .cost { color: var(--ink); font-weight: 600; margin-top: 2px; }
+  #consent h2 { margin: 0; font-size: 23px; font-weight: 700; line-height: 1.25; text-align: center; }
+  #consent .lead { margin: 0; font-size: 16px; line-height: 1.5; color: #dcd8f5; text-align: center; }
+  #consent .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  #consent .opt { position: relative; display: flex; flex-direction: column; gap: 8px; text-align: left; padding: 16px 18px;
+    border-radius: 16px; color: #f4f2ff; background: #221e3a; border: 2px solid #3a3560; cursor: pointer;
+    font-size: 15px; font-weight: 400; transition: border-color .15s, background .15s, transform .15s; }
+  #consent .opt:hover { border-color: var(--c1); background: #2a2548; transform: translateY(-2px); }
+  #consent .opt b { font-size: 19px; font-weight: 700; }
   #consent .opt.privacy b { color: #3de0a8; }
-  #consent .opt.current { border-color: var(--c1); background: rgba(255,255,255,.1); }
-  #consent .opt.privacy.current { border-color: #3de0a8; }
-  #consent .opt .last { position: absolute; top: 8px; right: 9px; font-size: 10px; font-style: normal; font-weight: 600;
-    padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,.12); color: var(--ink); display: none; }
-  #consent .opt.current .last { display: block; }
-  #consent small { font-size: 11px; line-height: 1.4; color: var(--muted); }
-  #consent .tip { font-size: 12px; padding: 7px 10px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); }
+  #consent .opt.privacy:hover { border-color: #3de0a8; }
+  #consent .fact { display: flex; align-items: center; gap: 9px; line-height: 1.3; }
+  #consent .fact svg { width: 18px; height: 18px; flex: none; color: #a9a3d6; }
+  #consent .opt.privacy .fact svg { color: #3de0a8; }
+  #consent .opt .last { position: absolute; top: 14px; right: 14px; font-size: 12px; font-style: normal; font-weight: 600;
+    padding: 2px 9px; border-radius: 999px; background: rgba(255,255,255,.14); display: none; }
+  #consent.reopened .opt.current .last { display: block; }
+  #consent .tip { margin: 0; font-size: 15px; line-height: 1.45; color: #dcd8f5; text-align: center; }
+  #consent details { font-size: 14.5px; line-height: 1.5; color: #dcd8f5; }
+  #consent summary { cursor: pointer; text-align: center; color: #b7aefc; font-weight: 600; list-style: none; }
+  #consent summary::-webkit-details-marker { display: none; }
+  #consent summary::after { content: ' \25BE'; }
+  #consent details[open] summary::after { content: ' \25B4'; }
+  #consent details ul { margin: 10px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+  #consent details li::marker { color: #ffb03d; }
+
+  /* later starts: one-line reminder under the task box */
+  #setupErr:empty { display: none; }
+  #modeLine { flex: none; font-size: 11.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #modeLine a { color: var(--c1); cursor: pointer; text-decoration: underline; }
 
   /* privacy mode badge on the orb */
   #shield { position: absolute; right: 2%; bottom: 2%; width: 26cqmin; height: 26cqmin; display: none;
@@ -247,20 +257,37 @@
   </div>
 
   <div id="consent">
-    <div class="kicker">Before you start · privacy and cost</div>
-    <h2>Focus Orb looks at your screen</h2>
-    <p>In full mode it sends a screenshot of every display to OpenAI every 3 seconds, about <b>500 screenshots per Pomodoro</b>.</p>
-    <ul>
-      <li><b>Everything visible goes along:</b> open chats and emails, documents, photos, other people's names and messages, your second screen.</li>
-      <li><b>It leaves your PC:</b> screenshots are processed on OpenAI's servers under their API data policy. Nothing is saved on this PC.</li>
-      <li><b>At work or university</b> you may not be allowed to share screen contents with an AI service.</li>
-    </ul>
+    <h2>I'll look at your screen while you focus</h2>
+    <p class="lead">In full mode, a screenshot goes to OpenAI every 3 seconds, including chats, emails and anything else that's visible.</p>
     <div class="opts">
-      <button class="opt" type="button" data-mode="full"><b>Full mode</b><span>Screenshot + window title</span><span>12 / 12 correct in tests</span><span class="cost">≈ $0.08 per Pomodoro</span><i class="last">Last used</i></button>
-      <button class="opt privacy" type="button" data-mode="privacy"><b>Privacy mode</b><span>Window title only, never screenshots</span><span>11 / 12 correct in tests</span><span class="cost">≈ $0.04 per Pomodoro</span><i class="last">Last used</i></button>
+      <button class="opt" type="button" data-mode="full">
+        <b>Full mode</b>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Screenshot + window title</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Most accurate</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.6 0-2.7.8-2.7 2s1.1 1.6 2.7 2 2.8.9 2.8 2.1-1.2 2-2.8 2c-1.2 0-2.2-.5-2.7-1.3M12 6.5v1.5M12 16v1.5"/></svg>&asymp; $0.08 per Pomodoro</span>
+        <i class="last">Current</i>
+      </button>
+      <button class="opt privacy" type="button" data-mode="privacy">
+        <b>Privacy mode</b>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h6"/></svg>Window title only, never screenshots</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.8"/></svg>Almost as accurate</span>
+        <span class="fact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M14.5 9.2c-.5-.8-1.4-1.2-2.5-1.2-1.6 0-2.7.8-2.7 2s1.1 1.6 2.7 2 2.8.9 2.8 2.1-1.2 2-2.8 2c-1.2 0-2.2-.5-2.7-1.3M12 6.5v1.5M12 16v1.5"/></svg>&asymp; $0.04 per Pomodoro</span>
+        <i class="last">Current</i>
+      </button>
     </div>
-    <p class="tip"><b>Wrong call?</b> When the orb pops out, click <b>This is work</b>. That app or site (on YouTube and the like: just that one video) counts as work for the rest of your task, and it's no longer sent to OpenAI.</p>
-    <small>Costs go to your own OpenAI account: 8 Pomodoros cost about $0.66 in full mode and $0.29 in privacy mode. Window titles can still reveal things like an email subject. Password managers, private windows and banking are never looked at in either mode.</small>
+    <p class="tip">Tip: if I get it wrong, click <b>This is work</b> when I pop out.</p>
+    <details id="noticeDetails">
+      <summary>What exactly is sent?</summary>
+      <ul>
+        <li><b>Full mode:</b> about 500 screenshots per Pomodoro, of every display, including other people's names and messages and your second screen.</li>
+        <li>They're processed on OpenAI's servers under OpenAI's API data policy. Nothing is saved on this PC.</li>
+        <li><b>Privacy mode:</b> only the active window's title, e.g. "Funny cats &ndash; YouTube". Titles can still reveal things like an email subject.</li>
+        <li>Password managers, private/incognito windows and banking sites are never looked at, in either mode.</li>
+        <li><b>This is work</b> remembers that app or site (on YouTube and the like: just that one video) as work for the current task; it's no longer sent to OpenAI.</li>
+        <li>At work or university, check that you may share screen contents with an AI service.</li>
+        <li>Costs go to your own OpenAI account. In tests, full mode got 12 of 12 situations right, privacy mode 11 of 12.</li>
+      </ul>
+    </details>
   </div>
 
   <form id="setup">
@@ -277,6 +304,7 @@
       <button id="saveKey" type="button">Save</button>
     </div>
     <div id="setupErr"></div>
+    <div id="modeLine" hidden></div>
     <div id="keyHint" hidden>Saved encrypted on this PC · <a id="demoLink">Try the demo</a></div>
   </form>
 <script>
@@ -315,6 +343,13 @@
     $('setupErr').textContent = s.phase === 'idle' ? s.error : '';
     $('modeChip').textContent = s.mode === 'privacy' ? 'Privacy mode' : 'Full mode';
     document.querySelectorAll('#consent .opt').forEach((b) => b.classList.toggle('current', b.dataset.mode === s.mode));
+    $('consent').classList.toggle('reopened', !!s.noticeReopened);
+    if (s.needsConsent && !prev.needsConsent) { $('noticeDetails').open = false; fitNotice(); }
+    // Later starts: a one-line reminder of what goes where, with a link back to the full notice.
+    $('modeLine').innerHTML = s.mode === 'privacy'
+      ? 'Only window titles go to OpenAI &middot; <a>Details</a>'
+      : 'Screenshots go to OpenAI every 3 s &middot; <a>Details</a>';
+    $('modeLine').hidden = !s.mode || !!s.needsKey || !!s.error;
     $('modeChip').classList.toggle('privacy', s.mode === 'privacy');
     $('modeChip').hidden = !s.mode; // not shown in the demo
     // First run without an API key: ask for one (or offer the demo) instead of a task.
@@ -359,6 +394,15 @@
   }
   $('sumGo').addEventListener('click', () => window.orb.closeSummary());
   document.querySelectorAll('#consent .opt').forEach((b) => b.addEventListener('click', () => window.orb.setMode(b.dataset.mode)));
+  // The notice window follows its content (e.g. when "What exactly is sent?" is opened).
+  const fitNotice = () => requestAnimationFrame(() => {
+    if (!document.body.classList.contains('consent') || innerWidth < 600) return; // wait until the window has its notice width
+    const h = $('consent').offsetTop + $('consent').offsetHeight + 16;
+    if (Math.abs(h - innerHeight) > 2) window.orb.noticeHeight(h);
+  });
+  $('noticeDetails').addEventListener('toggle', fitNotice);
+  window.addEventListener('resize', fitNotice);
+  $('modeLine').addEventListener('click', (e) => { if (e.target.tagName === 'A') window.orb.showNotice(); });
   $('modeChip').addEventListener('click', () => window.orb.setMode(state.mode === 'privacy' ? 'full' : 'privacy'));
   $('saveKey').addEventListener('click', () => window.orb.setKey($('key').value));
   $('key').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); window.orb.setKey($('key').value); } });

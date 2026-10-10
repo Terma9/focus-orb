@@ -63,10 +63,10 @@ const S = {
 };
 const settings = new Settings(app.getPath('userData'));
 const mode = () => settings.get('mode'); // 'full' | 'privacy'
-// The privacy notice (what gets sent where, and what it costs) is shown at every start of the app,
-// with the last choice pre-selected. It's not shown again until the next start.
-let noticeDone = false;
-const needsConsent = () => !demo && !noticeDone;
+// The privacy notice (what gets sent where, and what it costs) appears on the first start; later starts show a
+// one-line reminder in the start panel, whose "Details" link reopens the notice.
+let noticeRequested = false;
+const needsConsent = () => !demo && (!settings.get('privacyAcknowledged') || noticeRequested);
 const drift = new DriftTracker(CFG);
 const stats = new SessionStats();
 const work = new WorkList();
@@ -87,6 +87,7 @@ function publish() {
     summary: S.showSummary ? S.summary : null,
     needsKey: !brain.ready,
     needsConsent: needsConsent(),
+    noticeReopened: noticeRequested,
     mode: demo ? null : mode(), // the demo sends nothing anywhere, so no mode label
     error: S.error || (brain.ready ? '' : brain.missing),
   });
@@ -161,10 +162,10 @@ function goIdle() {
   publish();
 }
 
-// First-run privacy notice and the mode switch (start panel label / right-click menu).
+// Privacy notice and the mode switch (start panel label / right-click menu).
 function setPrivacyMode(next) {
   const first = needsConsent();
-  noticeDone = true;
+  noticeRequested = false;
   settings.set({ mode: next, privacyAcknowledged: true });
   log(`Mode: ${next === 'privacy' ? 'privacy (window titles only, no screenshots)' : 'full (screenshots + window titles)'}`);
   if (first && S.phase === 'idle') orb.setMode('setup');
@@ -305,6 +306,18 @@ ipcMain.on('dismiss', () => endAlert(false));
 ipcMain.on('work', () => endAlert(true));
 ipcMain.on('summary-close', closeSummary);
 ipcMain.on('set-mode', (_e, next) => { if (next === 'full' || next === 'privacy') setPrivacyMode(next); });
+ipcMain.on('show-notice', () => {
+  if (S.phase !== 'idle' || demo) return;
+  noticeRequested = true;
+  orb.setMode('consent');
+  publish();
+});
+// The notice grows when "What exactly is sent?" is opened.
+ipcMain.on('notice-height', (_e, h) => {
+  if (!needsConsent()) return;
+  orb.noticeHeight = Math.round(h);
+  orb.apply('consent');
+});
 ipcMain.on('menu', () => {
   const items = [];
   if (S.phase === 'focus') items.push({ label: 'Skip to break', click: startBreak });

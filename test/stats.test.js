@@ -46,3 +46,20 @@ test('shortLabel gives a friendly name', () => {
   assert.equal(shortLabel({ title: 'Claude', app: 'claude' }), 'Claude');
   assert.equal(shortLabel(null), 'something else');
 });
+
+test('the score never drops below 0', () => {
+  const s = new SessionStats();
+  s.start(0);
+  s.alertStarted(-10 * MIN, 'Netflix');
+  s.alertEnded(30 * MIN);
+  assert.equal(s.summary(25 * MIN).score, 0);
+});
+
+test('only the top 3 distractions are listed', () => {
+  const s = new SessionStats();
+  s.start(0);
+  ['YouTube', 'Reddit', 'X', 'Twitch'].forEach((label, i) => { s.alertStarted(i * MIN, label); s.alertEnded(i * MIN + (i + 1) * 10_000); });
+  const r = s.summary(25 * MIN);
+  assert.equal(r.driftCount, 4);
+  assert.deepEqual(r.top.map((d) => d.label), ['Twitch', 'X', 'Reddit']);
+});

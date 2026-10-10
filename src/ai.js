@@ -100,7 +100,7 @@ function createOpenAI(cfg) {
     }, 8000);
     const text = data.output_text ??
       (data.output || []).flatMap((o) => o.content || []).filter((c) => c.type === 'output_text').map((c) => c.text).join('');
-    return text.replace(/[\p{Extended_Pictographic}️]/gu, '').trim().replace(/^["']|["']$/g, '');
+    return text.replace(/[\p{Extended_Pictographic}\uFE0F]/gu, '').trim().replace(/^["']|["']$/g, '').trim();
   }
 
   return { judge, quip };
