@@ -60,8 +60,11 @@ function createOpenAI(cfg) {
             type: 'input_text',
             text: `The user committed to working on: "${task}".\n` +
               `Their active (foreground) window is ${describeWindow(fg)}.${confirmed}\n` +
-              `Attached are screenshots of all of their displays right now (${shots.length}). ` +
-              'Judge by the active window and the most prominent content. Background windows that are merely open do not count.',
+              (shots.length
+                ? `Attached are screenshots of all of their displays right now (${shots.length}). ` +
+                  'Judge by the active window and the most prominent content. Background windows that are merely open do not count.'
+                // Privacy mode: no screenshots, the window title is all there is.
+                : 'There is no screenshot: judge only from the window title and app name.'),
           },
           ...shots.map((image_url) => ({ type: 'input_image', image_url })),
         ],

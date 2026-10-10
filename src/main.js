@@ -7,6 +7,8 @@ const { SessionStats, shortLabel } = require('./stats');
 const { WorkList, workKey } = require('./worklist');
 const { OrbWindow } = require('./orb-window');
 const { createOpenAI, fallbackQuip, describeWindow } = require('./ai');
+const { sensitiveReason } = require('./privacy');
+const { Settings } = require('./settings');
 
 loadDotEnv(defaultEnvFile);
 const CFG = loadConfig();
@@ -28,10 +30,11 @@ function createRealBrain() {
       if (w && w.pid !== process.pid) lastFg = w; // clicking the orb shouldn't count as what you're doing
       return lastFg;
     },
-    async judge({ task, fg, workKeys }) {
-      const shots = await captureScreens();
+    async judge({ task, fg, workKeys, mode }) {
+      // Privacy mode: never take a screenshot, judge from the window title alone.
+      const shots = mode === 'privacy' ? [] : await captureScreens();
       const verdict = await openai.judge({ task, fg, shots, workKeys });
-      if (CFG.debugShots) saveDebug(path.join(__dirname, '..', 'debug'), shots, { task, window: fg, verdict });
+      if (CFG.debugShots && shots.length) saveDebug(path.join(__dirname, '..', 'debug'), shots, { task, window: fg, verdict });
       return verdict && { ...verdict, shots };
     },
     quip: (args) => openai.quip(args),
@@ -58,6 +61,9 @@ const S = {
   showSummary: false,
   error: '',
 };
+const settings = new Settings(app.getPath('userData'));
+const mode = () => settings.get('mode'); // 'full' | 'privacy'
+const needsConsent = () => !demo && !settings.get('privacyAcknowledged');
 const drift = new DriftTracker(CFG);
 const stats = new SessionStats();
 const work = new WorkList();
@@ -77,6 +83,8 @@ function publish() {
     alertGeo: orb.alertGeometry(),
     summary: S.showSummary ? S.summary : null,
     needsKey: !brain.ready,
+    needsConsent: needsConsent(),
+    mode: demo ? null : mode(), // the demo sends nothing anywhere, so no mode label
     error: S.error || (brain.ready ? '' : brain.missing),
   });
 }
@@ -146,7 +154,16 @@ function goIdle() {
   S.endsAt = 0;
   S.showSummary = false;
   clearDrift();
-  orb.setMode('setup');
+  orb.setMode(needsConsent() ? 'consent' : 'setup');
+  publish();
+}
+
+// First-run privacy notice and the mode switch (start panel label / right-click menu).
+function setPrivacyMode(next) {
+  const first = needsConsent();
+  settings.set({ mode: next, privacyAcknowledged: true });
+  log(`Mode: ${next === 'privacy' ? 'privacy (window titles only, no screenshots)' : 'full (screenshots + window titles)'}`);
+  if (first && S.phase === 'idle') orb.setMode('setup');
   publish();
 }
 
@@ -165,11 +182,19 @@ async function check() {
   try {
     const fg = brain.currentWindow();
     const approved = fg && work.match(fg);
-    if (approved) {
+    const sensitive = sensitiveReason(fg);
+    const neutral = { pDistracted: 0, activity: 'the_task' };
+    if (sensitive) {
+      // Password managers, private windows, banking: never screenshotted, title never sent.
+      onVerdict(neutral, null, t0, null, `${sensitive}: not looked at`);
+    } else if (approved) {
       // Marked as "This is work" for this task: no need to ask the model.
-      onVerdict({ pDistracted: 0, activity: 'the_task' }, fg, t0, null, `marked as work (${approved.value})`);
+      onVerdict(neutral, fg, t0, null, `marked as work (${approved.value})`);
+    } else if (mode() === 'privacy' && !fg?.title) {
+      // Privacy mode without a window title (e.g. not on Windows): nothing to judge.
+      onVerdict(neutral, fg, t0, null, 'privacy mode: no window title');
     } else {
-      const v = await brain.judge({ task: S.task, fg, workKeys: work.keys });
+      const v = await brain.judge({ task: S.task, fg, workKeys: work.keys, mode: mode() });
       if (session !== S.session) return;
       S.error = '';
       if (v) onVerdict(v, fg, t0, v.shots);
@@ -275,11 +300,20 @@ ipcMain.on('start', (_e, task) => {
 ipcMain.on('dismiss', () => endAlert(false));
 ipcMain.on('work', () => endAlert(true));
 ipcMain.on('summary-close', closeSummary);
+ipcMain.on('set-mode', (_e, next) => { if (next === 'full' || next === 'privacy') setPrivacyMode(next); });
 ipcMain.on('menu', () => {
   const items = [];
   if (S.phase === 'focus') items.push({ label: 'Skip to break', click: startBreak });
   if (S.phase === 'break') items.push({ label: 'End break now', click: goIdle });
   if (S.phase !== 'idle') items.push({ label: 'Stop', click: goIdle });
+  if (!demo) {
+    items.push({ type: 'separator' }, {
+      label: 'Privacy mode (window titles only, no screenshots)',
+      type: 'checkbox',
+      checked: mode() === 'privacy',
+      click: (item) => setPrivacyMode(item.checked ? 'privacy' : 'full'),
+    });
+  }
   items.push({ type: 'separator' }, { label: 'Quit Focus Orb', click: () => app.quit() });
   Menu.buildFromTemplate(items).popup({ window: orb.win });
 });
@@ -297,10 +331,12 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadStoredKey();
     orb.create().webContents.on('did-finish-load', () => {
+      if (needsConsent()) orb.setMode('consent'); // first launch: privacy notice before anything is watched
       publish();
       if (demo) demo.run({ orb, stats, startFocus, startBreak, closeSummary, endAlert, get state() { return S; } });
     });
-    screen.on('display-metrics-changed', () => orb.setMode(S.drifting ? 'alert' : S.phase === 'idle' ? 'setup' : S.showSummary ? 'summary' : 'small'));
+    const idleMode = () => (needsConsent() ? 'consent' : 'setup');
+    screen.on('display-metrics-changed', () => orb.setMode(S.drifting ? 'alert' : S.phase === 'idle' ? idleMode() : S.showSummary ? 'summary' : 'small'));
   });
   app.on('window-all-closed', () => app.quit());
 }

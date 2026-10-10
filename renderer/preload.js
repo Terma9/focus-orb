@@ -7,6 +7,7 @@ contextBridge.exposeInMainWorld('orb', {
   closeSummary: () => ipcRenderer.send('summary-close'),
   setKey: (key) => ipcRenderer.send('set-key', key),
   runDemo: () => ipcRenderer.send('run-demo'),
+  setMode: (mode) => ipcRenderer.send('set-mode', mode),
   menu: () => ipcRenderer.send('menu'),
   alertReady: () => ipcRenderer.send('alert-ready'),
   alertExited: () => ipcRenderer.send('alert-exited'),

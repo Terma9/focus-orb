@@ -95,8 +95,27 @@
     background: var(--glass); border: 1px solid rgba(255,255,255,.1); border-radius: 18px;
     padding: 14px 14px 12px; box-sizing: border-box; flex-direction: column; gap: 8px;
     backdrop-filter: blur(12px); }
-  body.setup:not(.summary) #setup { display: flex; }
-  #setup label { font-size: 13px; color: var(--muted); }
+  body.setup:not(.summary):not(.consent) #setup { display: flex; }
+  #setup .labelrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  #modeChip { flex: none; white-space: nowrap; font-size: 10.5px; font-weight: 600; padding: 1px 8px; border-radius: 999px; color: var(--ink);
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); }
+  #modeChip:hover { background: rgba(255,255,255,.16); }
+  #modeChip.privacy { color: #3de0a8; border-color: rgba(61,224,168,.45); }
+
+  /* ---------- first-run privacy notice ---------- */
+  #consent { position: absolute; left: 136px; right: 10px; top: 12px; bottom: 12px; display: none; box-sizing: border-box;
+    flex-direction: column; gap: 7px; padding: 13px 15px; border-radius: 18px; background: var(--glass);
+    border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(12px); animation: cardIn .5s cubic-bezier(.2,1.3,.4,1); }
+  body.consent #consent { display: flex; }
+  #consent .kicker { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  #consent p { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
+  #consent .opt { display: block; width: 100%; text-align: left; padding: 7px 11px; border-radius: 12px; font-weight: 600;
+    font-size: 13px; color: var(--ink); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); }
+  #consent .opt:hover { background: rgba(255,255,255,.13); border-color: var(--c1); }
+  #consent .opt span { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
+  #consent .opt.privacy { border-color: rgba(61,224,168,.45); }
+  #consent small { font-size: 11px; line-height: 1.35; color: var(--muted); }
+  #setup label { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #setup .row { display: flex; gap: 8px; }
   #task { flex: 1; min-width: 0; font: inherit; font-size: 15px; color: var(--ink); background: rgba(255,255,255,.07);
     border: 1px solid rgba(255,255,255,.14); border-radius: 10px; padding: 8px 10px; outline: none; }
@@ -207,8 +226,19 @@
     <button id="sumGo" type="button">Start break</button>
   </div>
 
+  <div id="consent">
+    <div class="kicker">Before we start</div>
+    <p>During a Pomodoro, Focus Orb checks your screen with OpenAI every 3 seconds. Nothing is saved on this PC.</p>
+    <button class="opt" type="button" data-mode="full">Full mode<span>Screenshot + window title · most accurate</span></button>
+    <button class="opt privacy" type="button" data-mode="privacy">Privacy mode<span>Only the window title, never screenshots · a bit less accurate</span></button>
+    <small>You can switch anytime. Password managers, private windows and banking are never looked at.</small>
+  </div>
+
   <form id="setup">
-    <label id="prompt" for="task">What are you working on?</label>
+    <div class="labelrow">
+      <label id="prompt" for="task">What are you working on?</label>
+      <button id="modeChip" type="button" title="Switch between full mode and privacy mode">Full mode</button>
+    </div>
     <div class="row" id="taskRow">
       <input id="task" autocomplete="off" spellcheck="false" placeholder="e.g. Write the intro of my thesis">
       <button id="go" type="submit">Start</button>
@@ -233,7 +263,7 @@
   let uiAlert = false, noAnim = false;
   function render() {
     const s = state;
-    const mode = uiAlert ? 'alert angry' : s.phase === 'idle' ? 'setup' : s.summary ? 'setup summary' : 'small';
+    const mode = uiAlert ? 'alert angry' : s.phase === 'idle' ? (s.needsConsent ? 'setup consent' : 'setup') : s.summary ? 'setup summary' : 'small';
     if (s.alertGeo) {
       document.body.style.setProperty('--sw', s.alertGeo.stageW + 'px');
       document.body.style.setProperty('--sh', s.alertGeo.stageH + 'px');
@@ -253,17 +283,20 @@
     $('orb').title = s.error || (s.phase === 'focus' ? `Focusing on: ${s.task}\nRight-click for options` :
       s.phase === 'break' ? 'Break time. Right-click for options' : '');
     $('setupErr').textContent = s.phase === 'idle' ? s.error : '';
+    $('modeChip').textContent = s.mode === 'privacy' ? 'Privacy mode' : 'Full mode';
+    $('modeChip').classList.toggle('privacy', s.mode === 'privacy');
+    $('modeChip').hidden = !s.mode; // not shown in the demo
     // First run without an API key: ask for one (or offer the demo) instead of a task.
     $('taskRow').hidden = !!s.needsKey;
     $('keyRow').hidden = $('keyHint').hidden = !s.needsKey;
-    if (s.needsKey) $('prompt').textContent = 'Paste your OpenAI API key to start';
+    if (s.needsKey) $('prompt').textContent = 'Your OpenAI API key';
     else if (prev.needsKey) $('prompt').textContent = 'What are you working on?';
     if (prev.drifting && !s.drifting && s.phase === 'focus') beHappy(1600);
     if (prev.phase === 'focus' && s.phase === 'break') beHappy(2600);
 
     if (s.phase === 'idle') {
       if (lastPhase !== 'idle') {
-        $('prompt').textContent = "Break's over. What's next?";
+        $('prompt').textContent = "Break's over. Next task?";
         $('task').value = s.task || '';
       }
       setTimeout(() => { const el = s.needsKey ? $('key') : $('task'); el.focus(); el.select(); }, 450);
@@ -294,6 +327,8 @@
     }));
   }
   $('sumGo').addEventListener('click', () => window.orb.closeSummary());
+  document.querySelectorAll('#consent .opt').forEach((b) => b.addEventListener('click', () => window.orb.setMode(b.dataset.mode)));
+  $('modeChip').addEventListener('click', () => window.orb.setMode(state.mode === 'privacy' ? 'full' : 'privacy'));
   $('saveKey').addEventListener('click', () => window.orb.setKey($('key').value));
   $('key').addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); window.orb.setKey($('key').value); } });
   $('demoLink').addEventListener('click', () => window.orb.runDemo());

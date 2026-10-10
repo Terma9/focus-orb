@@ -3,7 +3,7 @@ const path = require('path');
 
 const SMALL = 124;
 const MARGIN = 20;
-const PANELS = { setup: [420, 150], summary: [440, 200] };
+const PANELS = { setup: [420, 150], summary: [440, 200], consent: [480, 292] };
 
 // The one transparent window the orb lives in. Modes:
 //   setup   - task box next to the orb        summary - end-of-Pomodoro card
@@ -154,7 +154,7 @@ class OrbWindow {
     if (was === 'alert') win.setBounds(this.place(this.boundsFor(mode)));
     else this.animateTo(this.boundsFor(mode));
     win.setAlwaysOnTop(true, 'floating');
-    if (mode === 'setup' && !this.offsetX) {
+    if ((mode === 'setup' || mode === 'consent') && !this.offsetX) {
       win.show();
       win.focus();
     }

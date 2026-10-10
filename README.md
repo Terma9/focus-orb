@@ -29,7 +29,9 @@ Focus Orb is a small glowing character that sits in the corner while you work. E
 
 ## Features
 
-- **Watches, then reacts.** A screenshot plus the active window's title go to OpenAI's [Decisions API](https://developers.openai.com/api/docs/guides/decisions) every 3 s during focus time.
+- **Watches, then reacts.** Every 3 s during focus time it asks OpenAI's [Decisions API](https://developers.openai.com/api/docs/guides/decisions) whether you're distracted, using a screenshot plus the active window's title.
+- **Privacy mode.** Prefer no screenshots at all? Privacy mode sends only the window title (11 / 12 correct in testing vs. 12 / 12 with screenshots, at half the cost). You choose on first launch and can switch anytime.
+- **Never looks at private things.** Password managers, private/incognito windows and banking sites are skipped entirely in both modes: no screenshot, no title, no API call.
 - **Calls you out, with a joke.** On a confirmed drift the orb flies to the centre of your screen and says something short and specific: *"A cat in a box? Adorable. Your landing page is also adorable, and it misses you."*
 - **Won't let it go.** The orb stays until you click **Back to work**, and slowly grows to almost full screen the longer you ignore it.
 - **Learns what's work.** False alarm? Click **This is work** and that app, site or single video is approved for the rest of the task, checked locally and never sent to the AI again.
@@ -70,10 +72,14 @@ npm run demo
 
 **Use it for real:**
 
-- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/Terma9/focus-orb/releases). On first launch the orb asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
+- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/Terma9/focus-orb/releases). On first launch the orb explains what it sends where and lets you pick full or privacy mode. It then asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
 - **From source:** `npm start`. You can also put `OPENAI_API_KEY=…` in a `.env` file (see `.env.example`).
 
-Type what you're working on, press Enter, work. Right-click the orb to skip to the break, stop, or quit.
+Type what you're working on, press Enter, work. Right-click the orb to skip to the break, stop, switch privacy mode, or quit.
+
+<p align="center">
+  <img src="assets/screenshot-privacy.png" width="480" alt="First-launch privacy notice: choose full mode or privacy mode">
+</p>
 
 ## How it works
 
@@ -109,7 +115,8 @@ I evaluated 12 hand-labelled situations (5 work: code editor, Electron docs, Git
 
 | Setup | Correct | Time per check |
 |---|---|---|
-| **OpenAI Decisions API**, screenshot + window title (what ships) | **12 / 12** | **0.7 s** |
+| **OpenAI Decisions API**, screenshot + window title (full mode) | **12 / 12** | **0.7 s** |
+| **OpenAI Decisions API**, window title only (privacy mode) | **11 / 12** | **0.1 s** |
 | Local `qwen3:1.7b` via Ollama, window title only, few-shot prompt | 11 / 12 | 1.0 s |
 | Local `qwen3-vl:2b-instruct`, window title only, few-shot prompt | 10 / 12 | 0.6 s |
 | Local `qwen3-vl:2b-instruct` with a 512 px screenshot | – | ~109 s |
@@ -121,16 +128,27 @@ What I learned:
 - Running vision models locally on a laptop CPU is too slow for a check every few seconds.
 - Small local models judge window titles well, but only with a short few-shot prompt. With the long prompt written for the large model they answered "distracted" to everything.
 - "Thinking" model variants can spend minutes reasoning before a one-word answer. Use the instruct versions.
-
-A hybrid "privacy mode" is on the roadmap: judge the title locally first, and send a screenshot only when needed.
+- The window title alone gets almost everything right. Privacy mode's only miss was "Cat – Wikipedia", which looks harmless from the title; the screenshot is what gives it away.
 
 ## Privacy and cost
 
-- Screenshots are taken **only during focus time** and sent only to OpenAI. They're never written to disk unless you turn on `DEBUG_SAVE_SHOTS`, which keeps the last 20 checks locally so you can see what the model saw.
-- The orb window is excluded from screen capture, so it never ends up in its own screenshots.
-- Apps and sites approved with **This is work** are checked locally without any API call.
-- The API key stays in the main process; the visible page never sees it.
-- **Cost:** about 1,300 input tokens per check at $0.10 per 1M tokens, so roughly **$0.07 per 25-minute Pomodoro** with one display.
+| | Full mode | Privacy mode |
+|---|---|---|
+| Sent to OpenAI every 3 s | Screenshot of each display + active window title | Active window title only |
+| Accuracy (12 test cases) | 12 / 12 | 11 / 12 |
+| Input tokens per check | ~1,650 (one display) | ~720 |
+| Cost per 25-min Pomodoro | ~$0.08 | ~$0.04 |
+
+In both modes:
+
+- **Explicit choice:** the first launch explains what is sent where before anything is watched.
+- **Focus time only:** nothing is watched before you start, during breaks, or after you stop.
+- **Nothing stored:** screenshots are never written to disk, unless you turn on `DEBUG_SAVE_SHOTS`, which keeps the last 20 checks locally.
+- **Only to OpenAI:** no server of mine in between, no analytics, no tracking. You use your own API key.
+- **Never-look list:** password managers, private/incognito windows and banking sites are skipped, with no screenshot, no title and no request.
+- **Local checks:** apps and sites approved with **This is work** are matched on your PC, without any request.
+- **Out of its own screenshots:** the orb window is excluded from screen capture.
+- **Key isolation:** the API key stays in the main process; the visible page never sees it.
 
 ## Configuration
 
@@ -159,7 +177,7 @@ npm run dist         # build the Windows installer into dist/
 
 ## Roadmap
 
-- Hybrid privacy mode: local window-title check first, screenshot only when needed
+- Optional local AI (Ollama) for privacy mode, so nothing leaves the PC
 - macOS support (active-window detection is Windows-only for now)
 - Capture only the display with the active window
 - Weekly focus history
