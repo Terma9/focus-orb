@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline';">
+<title>Focus Orb demo</title>
+<!-- A staged desktop for `npm run demo` and the README GIF: a code editor and a (made-up) video site. -->
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif; }
+  body { background: radial-gradient(ellipse at 20% 0%, #2a2350, transparent 60%), radial-gradient(ellipse at 100% 100%, #1d3a4a, transparent 55%), #12121c; }
+  .win { position: absolute; left: 4%; top: 5%; width: 74%; height: 86%; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.06); display: none; flex-direction: column; }
+  body[data-scene="editor"] #editor, body[data-scene="video"] #video { display: flex; }
+  .bar { height: 38px; flex: none; display: flex; align-items: center; gap: 8px; padding: 0 14px; font-size: 13px; }
+  .dots i { display: inline-block; width: 12px; height: 12px; border-radius: 50%; margin-right: 6px; }
+  .dots i:nth-child(1) { background: #ff5f57; } .dots i:nth-child(2) { background: #febc2e; } .dots i:nth-child(3) { background: #28c840; }
+  .badge { position: absolute; left: 18px; bottom: 14px; font-size: 13px; color: rgba(255,255,255,.55); }
+  body.record .badge { display: none; }
+
+  /* editor */
+  #editor { background: #1e1e2a; color: #d4d4e0; }
+  #editor .bar { background: #191924; color: #9a9ab0; }
+  #editor .body { flex: 1; display: flex; min-height: 0; }
+  #editor .side { width: 230px; background: #1a1a25; padding: 14px; font-size: 13px; color: #9a9ab0; line-height: 1.9; }
+  #editor .side b { color: #e8e8f4; font-weight: 600; }
+  #editor .tabs { display: flex; background: #191924; font-size: 13px; }
+  #editor .tabs span { padding: 9px 18px; color: #8a8aa0; } #editor .tabs span.on { background: #1e1e2a; color: #fff; border-top: 2px solid #8b7bff; }
+  #editor pre { margin: 0; padding: 16px 22px; font: 15px/1.65 "Cascadia Code", Consolas, monospace; counter-reset: ln; }
+  #editor pre span.l { display: block; } #editor pre span.l::before { counter-increment: ln; content: counter(ln); display: inline-block; width: 34px; color: #4b4b63; }
+  .t { color: #7aa2ff; } .a { color: #c792ea; } .s { color: #c3e88d; } .c { color: #636385; font-style: italic; } .p { color: #ffcb6b; }
+  .cursor { display: inline-block; width: 2px; height: 1.1em; background: #fff; vertical-align: -3px; animation: cb 1s steps(1) infinite; }
+  @keyframes cb { 50% { opacity: 0; } }
+
+  /* video site */
+  #video { background: #0f0f14; color: #f1f1f6; }
+  #video .bar { background: #1c1c26; color: #b8b8cc; }
+  #video .tab { background: #0f0f14; padding: 8px 16px; border-radius: 8px 8px 0 0; margin-top: 8px; color: #fff; }
+  #video .url { margin: 0 12px 0 20px; flex: 1; background: #26263a; border-radius: 16px; padding: 6px 14px; color: #9a9ab5; }
+  #video .page { flex: 1; display: flex; gap: 22px; padding: 20px 26px; min-height: 0; }
+  #video .main { flex: 1; min-width: 0; }
+  #video .player { aspect-ratio: 16/9; border-radius: 14px; background: radial-gradient(circle at 50% 60%, #f6d7a8, #e8b77a 60%, #c98f52); position: relative; overflow: hidden; }
+  #video .player .controls { position: absolute; left: 0; right: 0; bottom: 0; height: 46px; background: linear-gradient(transparent, rgba(0,0,0,.6)); }
+  #video .player .progress { position: absolute; left: 16px; right: 16px; bottom: 16px; height: 4px; border-radius: 2px; background: rgba(255,255,255,.3); }
+  #video .player .progress i { display: block; width: 63%; height: 100%; background: #ff4e6a; border-radius: 2px; }
+  #video h1 { font-size: 22px; margin: 14px 0 4px; } #video .meta { color: #9a9ab0; font-size: 14px; }
+  #video .rec { width: 330px; display: flex; flex-direction: column; gap: 12px; }
+  #video .rec div { display: flex; gap: 10px; font-size: 13px; color: #c8c8d8; }
+  #video .rec div i { width: 150px; height: 84px; border-radius: 8px; flex: none; background: linear-gradient(135deg, #f0c08a, #b97b45); }
+  #video .rec div:nth-child(2n) i { background: linear-gradient(135deg, #a8c8f0, #5778b9); }
+  .cat { position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%); width: 46%; animation: peek 2.4s ease-in-out infinite; }
+  @keyframes peek { 50% { transform: translate(-50%, -54%); } }
+</style>
+</head>
+<body data-scene="editor">
+  <div id="editor" class="win">
+    <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span>index.html — landing-page — Code</span></div>
+    <div class="body">
+      <div class="side">EXPLORER<br><b>LANDING-PAGE</b><br>&nbsp; assets<br>&nbsp; <b>index.html</b><br>&nbsp; styles.css<br>&nbsp; main.js<br>&nbsp; README.md</div>
+      <div style="flex:1;min-width:0">
+        <div class="tabs"><span class="on">index.html</span><span>styles.css</span></div>
+<pre><span class="l"><span class="c">&lt;!-- Hero --&gt;</span></span><span class="l"><span class="t">&lt;section</span> <span class="a">class</span>=<span class="s">"hero"</span><span class="t">&gt;</span></span><span class="l">  <span class="t">&lt;h1&gt;</span>Ship faster with <span class="t">&lt;em&gt;</span>Nimbus<span class="t">&lt;/em&gt;&lt;/h1&gt;</span></span><span class="l">  <span class="t">&lt;p</span> <span class="a">class</span>=<span class="s">"lead"</span><span class="t">&gt;</span>Deploy previews for every pull request.<span class="t">&lt;/p&gt;</span></span><span class="l">  <span class="t">&lt;div</span> <span class="a">class</span>=<span class="s">"cta"</span><span class="t">&gt;</span></span><span class="l">    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"/signup"</span> <span class="a">class</span>=<span class="s">"btn primary"</span><span class="t">&gt;</span>Start free<span class="t">&lt;/a&gt;</span></span><span class="l">    <span class="t">&lt;a</span> <span class="a">href</span>=<span class="s">"/docs"</span> <span class="a">class</span>=<span class="s">"btn"</span><span class="t">&gt;</span>Read the docs<span class="t">&lt;/a&gt;</span></span><span class="l">  <span class="t">&lt;/div&gt;</span></span><span class="l"><span class="t">&lt;/section&gt;</span></span><span class="l"></span><span class="l"><span class="c">&lt;!-- Features --&gt;</span></span><span class="l"><span class="t">&lt;section</span> <span class="a">class</span>=<span class="s">"features"</span><span class="t">&gt;</span></span><span class="l">  <span class="t">&lt;article&gt;</span></span><span class="l">    <span class="t">&lt;h3&gt;</span>Instant previews<span class="t">&lt;/h3&gt;</span></span><span class="l">    <span class="t">&lt;p&gt;</span>Every branch gets its own URL in seconds.<span class="t">&lt;/p&gt;</span></span><span class="l">  <span class="t">&lt;/article&gt;</span></span><span class="l">  <span class="t">&lt;article&gt;</span></span><span class="l">    <span class="t">&lt;h3&gt;</span>Zero config<span class="t">&lt;/h3&gt;</span></span><span class="l">    <span class="t">&lt;p&gt;</span><span class="cursor"></span></span><span class="l">  <span class="t">&lt;/article&gt;</span></span><span class="l"><span class="t">&lt;/section&gt;</span></span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div id="video" class="win">
+    <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="tab">Cat in a box compilation – CatTube</span><span class="url">cattube.example/watch?v=box-cats</span></div>
+    <div class="page">
+      <div class="main">
+        <div class="player">
+          <svg class="cat" viewBox="0 0 200 160">
+            <rect x="20" y="92" width="160" height="62" rx="6" fill="#a8743f"/><rect x="20" y="92" width="160" height="14" fill="#8d5f31"/>
+            <path d="M58 98 L62 40 L82 62 L118 62 L138 40 L142 98 Z" fill="#555a66"/>
+            <circle cx="84" cy="80" r="7" fill="#fff"/><circle cx="116" cy="80" r="7" fill="#fff"/>
+            <circle cx="85" cy="81" r="3.5" fill="#1c1535"/><circle cx="117" cy="81" r="3.5" fill="#1c1535"/>
+            <path d="M96 90 l4 4 l4 -4" fill="none" stroke="#ffb3c1" stroke-width="3" stroke-linecap="round"/>
+          </svg>
+          <div class="controls"></div><div class="progress"><i></i></div>
+        </div>
+        <h1>Cat in a box compilation (you won't believe #7)</h1>
+        <div class="meta">CatTube · 4.2M views · 3 days ago</div>
+      </div>
+      <div class="rec">
+        <div><i></i><span>Cats vs. cucumbers, part 4</span></div>
+        <div><i></i><span>Dog learns to open the fridge</span></div>
+        <div><i></i><span>Cat in a slightly bigger box</span></div>
+        <div><i></i><span>10 hours of rain on a window</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="badge">Focus Orb demo · press Esc to exit</div>
+<script>
+  if (location.search.includes('record')) document.body.classList.add('record');
+  window.setScene = (name) => { document.body.dataset.scene = name; };
+</script>
+</body>
+</html>

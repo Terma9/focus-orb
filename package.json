@@ -1,0 +1,58 @@
+{
+  "name": "focus-orb",
+  "productName": "Focus Orb",
+  "version": "1.0.0",
+  "description": "An AI Pomodoro companion: a little orb that watches your screen and calls you out when you drift.",
+  "author": "Simon",
+  "license": "MIT",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "demo": "electron . --demo",
+    "test": "node --test \"test/*.test.js\"",
+    "record-demo": "node scripts/record-demo.js",
+    "dist": "electron-builder --win"
+  },
+  "dependencies": {
+    "koffi": "^3.3.3"
+  },
+  "devDependencies": {
+    "electron": "^44.7.0",
+    "electron-builder": "^26.15.3",
+    "gifenc": "^1.0.3",
+    "pngjs": "^7.0.0"
+  },
+  "build": {
+    "appId": "dev.focusorb.app",
+    "productName": "Focus Orb",
+    "files": [
+      "src/**",
+      "renderer/**",
+      "assets/icon.png",
+      "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/koffi/**"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "artifactName": "Focus-Orb-Setup-${version}.${ext}",
+      "shortcutName": "Focus Orb"
+    }
+  }
+}
