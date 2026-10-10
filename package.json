@@ -54,5 +54,10 @@
       "artifactName": "Focus-Orb-Setup-${version}.${ext}",
       "shortcutName": "Focus Orb"
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Terma9/focus-orb.git"
+  },
+  "homepage": "https://github.com/Terma9/focus-orb#readme"
 }

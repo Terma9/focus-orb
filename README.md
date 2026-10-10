@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/OWNER/focus-orb/actions/workflows/ci.yml"><img src="https://github.com/OWNER/focus-orb/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/Terma9/focus-orb/actions/workflows/ci.yml"><img src="https://github.com/Terma9/focus-orb/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <img src="https://img.shields.io/badge/platform-Windows-0078D6" alt="Windows">
   <img src="https://img.shields.io/badge/Electron-44-47848F?logo=electron&logoColor=white" alt="Electron">
   <img src="https://img.shields.io/badge/OpenAI-Decisions%20API-412991?logo=openai&logoColor=white" alt="OpenAI Decisions API">
@@ -62,7 +62,7 @@ Add a short screen recording of a real session here, e.g.:
 **No API key? Watch the demo.** It plays the story above on a staged desktop:
 
 ```bash
-git clone https://github.com/OWNER/focus-orb.git
+git clone https://github.com/Terma9/focus-orb.git
 cd focus-orb
 npm install
 npm run demo
@@ -70,7 +70,7 @@ npm run demo
 
 **Use it for real:**
 
-- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/OWNER/focus-orb/releases). On first launch the orb asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
+- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/Terma9/focus-orb/releases). On first launch the orb asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
 - **From source:** `npm start`. You can also put `OPENAI_API_KEY=…` in a `.env` file (see `.env.example`).
 
 Type what you're working on, press Enter, work. Right-click the orb to skip to the break, stop, or quit.
