@@ -28,10 +28,9 @@
 
 <table align="center">
   <tr>
-    <td align="center" width="25%"><img src="assets/mood-focus.png" width="130"><br><b>Focusing</b><br>Sits in the corner with a 25-minute ring. Its eyes follow your mouse.</td>
-    <td align="center" width="25%"><img src="assets/mood-angry.png" width="130"><br><b>You drifted</b><br>Flies to the middle of your screen with a funny line and grows until you're back.</td>
-    <td align="center" width="25%"><img src="assets/mood-happy.png" width="130"><br><b>Back on track</b><br>Happy again the moment you click <i>Back to work</i>.</td>
-    <td align="center" width="25%"><img src="assets/mood-sleep.png" width="130"><br><b>On a break</b><br>Sleeps through your 5-minute break. Nothing is watched.</td>
+    <td align="center" valign="top" width="33%"><img src="assets/mood-focus.png" width="140"><br><b>Focusing</b><br>Sits in the corner with a 25-minute ring and follows your mouse.</td>
+    <td align="center" valign="top" width="33%"><img src="assets/mood-angry.png" width="140"><br><b>You drifted</b><br>Flies to the middle of your screen and grows until you're back.</td>
+    <td align="center" valign="top" width="33%"><img src="assets/mood-sleep.png" width="140"><br><b>On a break</b><br>Sleeps through your 5-minute break. Nothing is watched.</td>
   </tr>
 </table>
 
@@ -51,8 +50,11 @@ To notice that you drifted, Focus Orb has to see what you're doing, and that mea
 |---|---|---|
 | **Every 3 s during a Pomodoro** | A screenshot of each display + the active window's title | Only the active window's title |
 | **What that can include** | Everything visible: chats, emails, documents, photos, other people's names and messages, your second screen | Things like *"Funny cats – YouTube"*, but also an email subject or a document name |
-| **Accuracy on 12 real situations** | 12 of 12 judged correctly | 11 of 12 |
+| **Correct on normal websites** | 95 % | 93 % |
+| **Correct when the title is vague** (*"Home"*, *"Messages"*) | 100 % | 60 % |
 | **Cost per 25-min Pomodoro** | ≈ $0.08 | ≈ $0.04 |
+
+**In short:** on normal websites, the window title is almost as good as a screenshot. Privacy mode's weak spot is vague titles: a social feed called *"Home"* or a chat called *"Messages"* looks harmless, so it gives you the benefit of the doubt and misses some distractions. It almost never flags real work by mistake. Measured on 55 hand-labelled situations, see [the full results](eval/results.md).
 
 ### Where it goes
 
@@ -103,7 +105,7 @@ npm start        # the real thing (asks for your API key)
 
 - **"Distracted?", not "on task?"** The first version asked whether the user was on task and flagged AI chats and dashboards as distractions. Flipping the question, and giving anything work-like the benefit of the doubt, fixed the false alarms. Videos are the exception: they count as distracting unless they're a hands-on tutorial for the task.
 - **Typed answers instead of chat.** The Decisions API returns probabilities, not prose. There's nothing to parse, and the threshold can be tuned.
-- **The window title is strong evidence.** It's read from Windows (Win32 API via koffi) on every check. That's why privacy mode, which sends nothing else, still gets 11 of 12 right.
+- **The window title is strong evidence.** It's read from Windows (Win32 API via koffi) on every check. That's why privacy mode, which sends nothing else, still gets 93 % of normal websites right.
 - **Smooth animation on a transparent window.** Resizing the window every frame was jerky on Windows. The alert window now takes its full size once, while invisible, and the orb moves with GPU-accelerated CSS transforms.
 
 </details>
@@ -111,26 +113,35 @@ npm start        # the real thing (asks for your API key)
 <details>
 <summary><b>How accuracy was measured</b></summary>
 
-12 real situations were screenshotted and labelled by hand, then judged by the real AI with exactly the instructions the app uses. The task was "building my focus orb desktop app in Electron".
+`npm run eval` judges 55 hand-labelled situations with the real AI and exactly the app's instructions, in both modes, 3 times each (about 330 checks, a few cents). The situations cover three tasks: building this app, writing a thesis on climate policy, and preparing marketing slides.
 
-- **Work (5):** code editor, Electron docs, GitHub, OpenAI docs, Stack Overflow
-- **Distraction (7):** a Wikipedia article about cats, Reddit, news, an online chess game, YouTube, online shopping, Twitch
+- **40 real websites,** screenshotted fresh on every run: docs, GitHub, papers, design tools, YouTube, Reddit, Twitch, shops, sports, games. They include tricky ones, like a YouTube tutorial for the task or a serious but unrelated Wikipedia article.
+- **15 self-made screens with vague titles,** e.g. a social feed titled *"Home"* or a chess game titled *"Play"*. Here only the screenshot shows what's going on.
 
-| Mode | Correct | Time per check |
+| | Full mode | Privacy mode |
 |---|---|---|
-| Full mode (screenshot + title) | 12 of 12 | 0.7 s |
-| Privacy mode (title only) | 11 of 12 | 0.1 s |
+| Correct, all 55 | **96 %** | **84 %** |
+| Correct, 40 real websites | 95 % | 93 % |
+| Correct, 15 vague titles | 100 % | 60 % |
+| Work wrongly flagged | 2 of 27 | 1 of 27 |
+| Distractions missed | 0 of 28 | 8 of 28 |
+| Same answer in all 3 runs | 55 of 55 | 55 of 55 |
+| Time per check | 0.3 s | 0.1 s |
 
-Privacy mode's only miss was "Cat – Wikipedia": from the title alone it looks like harmless reading, and only the screenshot gives it away.
+What it shows:
 
-This is a small, hand-made check, not a benchmark. It's separate from the 52 automated code tests below.
+- **Full mode** missed no distraction. Its two false alarms were debatable: arXiv papers on atmospheric *physics* while writing about climate *policy*, and a general "how to present" video while making slides.
+- **Privacy mode** errs on the gentle side. It misses distractions when the title doesn't reveal them, but almost never flags real work.
+- **Neither mode wobbles:** every situation got the same verdict in all three runs.
+
+Every situation and verdict is listed in [eval/results.md](eval/results.md). This is a hand-made check, not a benchmark, and it's separate from the 52 automated code tests below.
 
 </details>
 
 <details>
 <summary><b>Tests</b></summary>
 
-52 automated code tests (separate from the 12-situation accuracy check above) with Node's built-in test runner, 100 % line coverage of the logic modules, run by GitHub Actions on every push. They cover:
+52 automated code tests (separate from the accuracy check above) with Node's built-in test runner, 100 % line coverage of the logic modules, run by GitHub Actions on every push. They cover:
 
 - the alert rules: threshold, streak, grace period, snooze
 - the focus score
@@ -151,7 +162,7 @@ This is a small, hand-made check, not a benchmark. It's separate from the 52 aut
 <details>
 <summary><b>Experiment: local AI instead of OpenAI</b></summary>
 
-I tested small open-weight models via Ollama on a laptop CPU. Judging window titles worked well (11 of 12 correct, ~1 s per check). Screenshots took ~109 s per check, far too slow for checks every few seconds, so the app uses OpenAI.
+I tested small open-weight models via Ollama on a laptop CPU. Judging window titles worked well (11 of the first 12 test situations, ~1 s per check). Screenshots took ~109 s per check, far too slow for checks every few seconds, so the app uses OpenAI.
 
 </details>
 

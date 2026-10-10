@@ -1,0 +1,365 @@
+{
+  "_about": "Hand-labelled situations for `npm run eval`. Each is a public web page opened in a browser, with the window title a browser would show. label = what the orb should decide.",
+  "tasks": {
+    "orb": "building my focus orb desktop app in Electron",
+    "thesis": "writing my bachelor thesis about climate policy",
+    "slides": "preparing slides for a marketing presentation"
+  },
+  "cases": [
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://www.electronjs.org/docs/latest/api/browser-window",
+      "title": "BrowserWindow | Electron"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://github.com/electron/electron",
+      "title": "GitHub - electron/electron: Build cross-platform desktop apps with JavaScript, HTML, and CSS"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/transform",
+      "title": "transform - CSS: Cascading Style Sheets | MDN"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://stackoverflow.com/questions/tagged/electron",
+      "title": "Newest 'electron' Questions - Stack Overflow"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://www.npmjs.com/package/koffi",
+      "title": "koffi - npm"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://developers.openai.com/api/docs/guides/decisions",
+      "title": "Decisions - OpenAI API"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://nodejs.org/api/test.html",
+      "title": "Test runner | Node.js Documentation"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "url": "https://www.youtube.com/results?search_query=electron+js+tutorial+transparent+window",
+      "title": "electron js tutorial transparent window - YouTube",
+      "tricky": "a YouTube tutorial for the exact task"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://www.youtube.com/results?search_query=funny+cats+compilation",
+      "title": "funny cats compilation - YouTube"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://old.reddit.com/r/funny/",
+      "title": "funny - Reddit"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://www.twitch.tv/directory/category/just-chatting",
+      "title": "Just Chatting - Twitch"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://www.ebay.com/sch/i.html?_nkw=gaming+headset",
+      "title": "gaming headset | eBay"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://lichess.org/tv",
+      "title": "Lichess TV"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "url": "https://en.wikipedia.org/wiki/Cat",
+      "title": "Cat - Wikipedia",
+      "tricky": "harmless-looking reading"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://en.wikipedia.org/wiki/Paris_Agreement",
+      "title": "Paris Agreement - Wikipedia"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://www.ipcc.ch/report/ar6/syr/",
+      "title": "AR6 Synthesis Report: Climate Change 2023 — IPCC"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://arxiv.org/list/physics.ao-ph/recent",
+      "title": "Atmospheric and Oceanic Physics | arXiv",
+      "tricky": "climate science papers, but not climate policy"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://unfccc.int/process-and-meetings/the-paris-agreement",
+      "title": "The Paris Agreement | UNFCCC"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://ourworldindata.org/co2-and-greenhouse-gas-emissions",
+      "title": "CO₂ and Greenhouse Gas Emissions - Our World in Data"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://www.deepl.com/translator",
+      "title": "DeepL Translate: The world's most accurate translator",
+      "tricky": "a general tool, not topic-specific"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "url": "https://en.wikipedia.org/wiki/Carbon_tax",
+      "title": "Carbon tax - Wikipedia"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://www.bbc.com/sport/football",
+      "title": "Football - BBC Sport"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://www.imdb.com/chart/top/",
+      "title": "IMDb Top 250 Movies"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://store.steampowered.com/",
+      "title": "Welcome to Steam"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://www.etsy.com/search?q=vintage+lamp",
+      "title": "Vintage lamp - Etsy"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://en.wikipedia.org/wiki/Roman_Empire",
+      "title": "Roman Empire - Wikipedia",
+      "tricky": "serious reading, but unrelated"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "url": "https://www.booking.com/",
+      "title": "Booking.com | Official site | The best hotels, flights, car rentals & accommodations"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://www.canva.com/presentations/templates/",
+      "title": "Free presentation templates | Canva"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://unsplash.com/s/photos/business-meeting",
+      "title": "Business Meeting Pictures | Download Free Images on Unsplash"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://fonts.google.com/",
+      "title": "Browse Fonts - Google Fonts"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://coolors.co/palettes/trending",
+      "title": "Trending Color Palettes - Coolors"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://en.wikipedia.org/wiki/Marketing_mix",
+      "title": "Marketing mix - Wikipedia"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://blog.hubspot.com/marketing/marketing-statistics",
+      "title": "Marketing Statistics You Need to Know | HubSpot Blog"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "url": "https://www.youtube.com/results?search_query=how+to+give+a+great+presentation",
+      "title": "how to give a great presentation - YouTube",
+      "tricky": "a YouTube video that helps with the task"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://news.ycombinator.com/",
+      "title": "Hacker News",
+      "tricky": "tech news, unrelated to the task"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://www.espn.com/nba/scoreboard",
+      "title": "NBA Scoreboard - ESPN"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://en.wikipedia.org/wiki/List_of_Pok%C3%A9mon",
+      "title": "List of Pokémon - Wikipedia"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://www.netflix.com/",
+      "title": "Netflix"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://www.chess.com/play/online",
+      "title": "Play Chess Online - Chess.com"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "url": "https://www.ikea.com/us/en/cat/sofas-fu003/",
+      "title": "Sofas - IKEA"
+    }
+  ],
+  "_aboutVague": "Self-made screens (eval/scenes.js) whose window title says (almost) nothing. They show where full mode (screenshot) and privacy mode (title only) differ.",
+  "vague": [
+    {
+      "task": "thesis",
+      "label": "work",
+      "scene": "essay",
+      "title": "Untitled document",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "work",
+      "scene": "spreadsheet",
+      "title": "Sheet1",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "scene": "video",
+      "title": "Watch",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "scene": "feed",
+      "title": "Home",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "scene": "shop",
+      "title": "Shop",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "scene": "sports",
+      "title": "Live",
+      "app": "chrome"
+    },
+    {
+      "task": "thesis",
+      "label": "distracted",
+      "scene": "chat",
+      "title": "Messages",
+      "app": "chrome"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "scene": "apidocs",
+      "title": "Docs",
+      "app": "chrome"
+    },
+    {
+      "task": "orb",
+      "label": "work",
+      "scene": "terminal",
+      "title": "Windows PowerShell",
+      "app": "WindowsTerminal"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "scene": "video",
+      "title": "Watch",
+      "app": "chrome"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "scene": "game",
+      "title": "Play",
+      "app": "chrome"
+    },
+    {
+      "task": "orb",
+      "label": "distracted",
+      "scene": "feed",
+      "title": "Home",
+      "app": "chrome"
+    },
+    {
+      "task": "slides",
+      "label": "work",
+      "scene": "slides",
+      "title": "Presentation1",
+      "app": "chrome"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "scene": "shop",
+      "title": "Shop",
+      "app": "chrome"
+    },
+    {
+      "task": "slides",
+      "label": "distracted",
+      "scene": "chat",
+      "title": "Messages",
+      "app": "chrome"
+    }
+  ]
+}

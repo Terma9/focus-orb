@@ -12,7 +12,8 @@
     "test": "node --test \"test/*.test.js\"",
     "record-demo": "node scripts/record-demo.js",
     "dist": "electron-builder --win",
-    "test:coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" \"test/*.test.js\""
+    "test:coverage": "node --test --experimental-test-coverage --test-coverage-exclude=\"test/**\" \"test/*.test.js\"",
+    "eval": "electron scripts/eval.js"
   },
   "dependencies": {
     "koffi": "^3.3.3"
