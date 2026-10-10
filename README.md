@@ -24,15 +24,18 @@
   <img src="assets/demo.gif" width="800" alt="Focus Orb demo: while coding, the user opens a cat video; the orb flies to the centre of the screen and calls them out, grows until they click Back to work, then shows a focus score">
 </p>
 
-## A session in three steps
+## Meet the orb
 
-<table>
+<table align="center">
   <tr>
-    <td align="center" width="33%"><img src="assets/mood-focus.png" width="120"><br><b>1. Say what you're working on</b><br>The orb sits in the corner with a 25-minute ring and keeps an eye on your screen.</td>
-    <td align="center" width="33%"><img src="assets/mood-angry.png" width="120"><br><b>2. Drift off, get called out</b><br>It flies to the middle of your screen with a funny line, and grows until you go back to work.</td>
-    <td align="center" width="33%"><img src="assets/screenshot-summary.png" width="300"><br><b>3. See how you did</b><br>A focus score after every Pomodoro, then a 5-minute break where nothing is watched.</td>
+    <td align="center" width="25%"><img src="assets/mood-focus.png" width="130"><br><b>Focusing</b><br>Sits in the corner with a 25-minute ring. Its eyes follow your mouse.</td>
+    <td align="center" width="25%"><img src="assets/mood-angry.png" width="130"><br><b>You drifted</b><br>Flies to the middle of your screen with a funny line and grows until you're back.</td>
+    <td align="center" width="25%"><img src="assets/mood-happy.png" width="130"><br><b>Back on track</b><br>Happy again the moment you click <i>Back to work</i>.</td>
+    <td align="center" width="25%"><img src="assets/mood-sleep.png" width="130"><br><b>On a break</b><br>Sleeps through your 5-minute break. Nothing is watched.</td>
   </tr>
 </table>
+
+<p align="center">After every Pomodoro you get a focus score:<br><br><img src="assets/screenshot-summary.png" width="380" alt="End-of-Pomodoro summary: 99 % focused, drifted once"></p>
 
 - **Hard to annoy:** it only reacts when the AI is at least 80 % sure, twice in a row. Docs, AI chats and dashboards count as work.
 - **Learns what's work:** wrong call? Click **This is work** and that app, site or video is fine for the rest of your task.
@@ -40,13 +43,36 @@
 
 ## Privacy
 
+To notice that you drifted, Focus Orb has to see what you're doing, and that means information about your screen leaves your computer. You decide how much: on first start it explains everything below and lets you pick a mode.
+
+### What is sent
+
 | | Full mode | Privacy mode |
 |---|---|---|
-| Sent to OpenAI every 3 s | Screenshot + window title | Window title only |
-| Correct in testing | 12 of 12 | 11 of 12 |
-| Cost per Pomodoro | ≈ $0.08 | ≈ $0.04 |
+| **Every 3 s during a Pomodoro** | A screenshot of each display + the active window's title | Only the active window's title |
+| **What that can include** | Everything visible: chats, emails, documents, photos, other people's names and messages, your second screen | Things like *"Funny cats – YouTube"*, but also an email subject or a document name |
+| **Accuracy on 12 real situations** | 12 of 12 judged correctly | 11 of 12 |
+| **Cost per 25-min Pomodoro** | ≈ $0.08 | ≈ $0.04 |
 
-Password managers, private windows and banking sites are never looked at. Nothing is stored, and data goes only to OpenAI, with your own API key. You choose the mode on first start.
+### Where it goes
+
+Only to **OpenAI's API**, with **your own API key**, and it's processed there under OpenAI's API data policy. There's no server of mine in between, and no analytics or tracking.
+
+### What never leaves your PC
+
+- **Sensitive windows**, in both modes: password managers, private/incognito browser windows and banking sites are not screenshotted, and their titles aren't sent.
+- **Approved pages:** anything you marked **This is work** is recognised locally, without asking OpenAI.
+- **Time outside a Pomodoro:** before you start, during breaks and after you stop, nothing is watched.
+
+### What is stored on your PC
+
+- **No screenshots:** they only exist in memory for the one request.
+- **Your API key:** encrypted with Windows' built-in protection (DPAPI).
+- **Your choice of mode.**
+
+> **At work or university?** Check whether you're allowed to share screen contents with an AI service. If you're unsure, use privacy mode.
+
+<p align="center"><img src="assets/screenshot-privacy.png" width="480" alt="The privacy notice on first start: full mode or privacy mode"></p>
 
 ## Quick start
 
@@ -83,9 +109,28 @@ npm start        # the real thing (asks for your API key)
 </details>
 
 <details>
+<summary><b>How accuracy was measured</b></summary>
+
+12 real situations were screenshotted and labelled by hand, then judged by the real AI with exactly the instructions the app uses. The task was "building my focus orb desktop app in Electron".
+
+- **Work (5):** code editor, Electron docs, GitHub, OpenAI docs, Stack Overflow
+- **Distraction (7):** a Wikipedia article about cats, Reddit, news, an online chess game, YouTube, online shopping, Twitch
+
+| Mode | Correct | Time per check |
+|---|---|---|
+| Full mode (screenshot + title) | 12 of 12 | 0.7 s |
+| Privacy mode (title only) | 11 of 12 | 0.1 s |
+
+Privacy mode's only miss was "Cat – Wikipedia": from the title alone it looks like harmless reading, and only the screenshot gives it away.
+
+This is a small, hand-made check, not a benchmark. It's separate from the 52 automated code tests below.
+
+</details>
+
+<details>
 <summary><b>Tests</b></summary>
 
-52 tests with Node's built-in test runner, 100 % line coverage of the logic modules, run by GitHub Actions on every push. They cover:
+52 automated code tests (separate from the 12-situation accuracy check above) with Node's built-in test runner, 100 % line coverage of the logic modules, run by GitHub Actions on every push. They cover:
 
 - the alert rules: threshold, streak, grace period, snooze
 - the focus score
