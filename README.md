@@ -30,7 +30,7 @@ Focus Orb is a small glowing character that sits in the corner while you work. E
 ## Features
 
 - **Watches, then reacts.** Every 3 s during focus time it asks OpenAI's [Decisions API](https://developers.openai.com/api/docs/guides/decisions) whether you're distracted, using a screenshot plus the active window's title.
-- **Privacy mode.** Prefer no screenshots at all? Privacy mode sends only the window title (11 / 12 correct in testing vs. 12 / 12 with screenshots, at half the cost). You choose on first launch and can switch anytime.
+- **Privacy mode.** Prefer no screenshots at all? Privacy mode sends only the window title (11 / 12 correct in testing vs. 12 / 12 with screenshots, at half the cost). Every start of the app explains what's sent where and what it costs, and lets you choose. A green shield on the orb shows when privacy mode is on.
 - **Never looks at private things.** Password managers, private/incognito windows and banking sites are skipped entirely in both modes: no screenshot, no title, no API call.
 - **Calls you out, with a joke.** On a confirmed drift the orb flies to the centre of your screen and says something short and specific: *"A cat in a box? Adorable. Your landing page is also adorable, and it misses you."*
 - **Won't let it go.** The orb stays until you click **Back to work**, and slowly grows to almost full screen the longer you ignore it.
@@ -72,13 +72,13 @@ npm run demo
 
 **Use it for real:**
 
-- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/Terma9/focus-orb/releases). On first launch the orb explains what it sends where and lets you pick full or privacy mode. It then asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
+- **Installer:** download `Focus-Orb-Setup.exe` from [Releases](https://github.com/Terma9/focus-orb/releases). Every time it starts, the orb explains what it sends where and what it costs, and lets you pick full or privacy mode. It then asks for your [OpenAI API key](https://platform.openai.com/api-keys) and stores it encrypted (Windows DPAPI via Electron `safeStorage`).
 - **From source:** `npm start`. You can also put `OPENAI_API_KEY=…` in a `.env` file (see `.env.example`).
 
 Type what you're working on, press Enter, work. Right-click the orb to skip to the break, stop, switch privacy mode, or quit.
 
 <p align="center">
-  <img src="assets/screenshot-privacy.png" width="480" alt="First-launch privacy notice: choose full mode or privacy mode">
+  <img src="assets/screenshot-privacy.png" width="560" alt="Privacy notice at every start: what is sent, what it costs, full mode or privacy mode">
 </p>
 
 ## How it works
@@ -141,7 +141,7 @@ What I learned:
 
 In both modes:
 
-- **Explicit choice:** the first launch explains what is sent where before anything is watched.
+- **Explicit choice:** every start of the app explains what is sent where and what it costs, before anything is watched.
 - **Focus time only:** nothing is watched before you start, during breaks, or after you stop.
 - **Nothing stored:** screenshots are never written to disk, unless you turn on `DEBUG_SAVE_SHOTS`, which keeps the last 20 checks locally.
 - **Only to OpenAI:** no server of mine in between, no analytics, no tracking. You use your own API key.

@@ -3,7 +3,7 @@ const path = require('path');
 
 const SMALL = 124;
 const MARGIN = 20;
-const PANELS = { setup: [420, 150], summary: [440, 200], consent: [480, 292] };
+const PANELS = { setup: [420, 150], summary: [440, 200], consent: [600, 492] };
 
 // The one transparent window the orb lives in. Modes:
 //   setup   - task box next to the orb        summary - end-of-Pomodoro card

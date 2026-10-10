@@ -102,19 +102,38 @@
   #modeChip:hover { background: rgba(255,255,255,.16); }
   #modeChip.privacy { color: #3de0a8; border-color: rgba(61,224,168,.45); }
 
-  /* ---------- first-run privacy notice ---------- */
-  #consent { position: absolute; left: 136px; right: 10px; top: 12px; bottom: 12px; display: none; box-sizing: border-box;
-    flex-direction: column; gap: 7px; padding: 13px 15px; border-radius: 18px; background: var(--glass);
+  /* ---------- privacy notice (every app start) ---------- */
+  #consent { position: absolute; left: 136px; right: 10px; top: 10px; bottom: 10px; display: none; box-sizing: border-box;
+    flex-direction: column; gap: 8px; padding: 14px 16px; border-radius: 18px; background: var(--glass);
     border: 1px solid rgba(255,255,255,.1); backdrop-filter: blur(12px); animation: cardIn .5s cubic-bezier(.2,1.3,.4,1); }
   body.consent #consent { display: flex; }
-  #consent .kicker { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-  #consent p { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
-  #consent .opt { display: block; width: 100%; text-align: left; padding: 7px 11px; border-radius: 12px; font-weight: 600;
-    font-size: 13px; color: var(--ink); background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); }
-  #consent .opt:hover { background: rgba(255,255,255,.13); border-color: var(--c1); }
-  #consent .opt span { display: block; font-size: 11.5px; font-weight: 400; color: var(--muted); margin-top: 1px; }
-  #consent .opt.privacy { border-color: rgba(61,224,168,.45); }
-  #consent small { font-size: 11px; line-height: 1.35; color: var(--muted); }
+  #consent .kicker { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  #consent h2 { margin: -2px 0 0; font-size: 17px; font-weight: 700; color: var(--ink); }
+  #consent p, #consent li { margin: 0; font-size: 12.5px; line-height: 1.4; color: var(--ink); }
+  #consent b { font-weight: 650; }
+  #consent ul { margin: 0; padding-left: 17px; display: flex; flex-direction: column; gap: 3px; }
+  #consent li::marker { color: #ffb03d; }
+  #consent .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 2px; }
+  #consent .opt { position: relative; display: flex; flex-direction: column; gap: 1px; text-align: left; padding: 8px 11px;
+    border-radius: 12px; color: var(--ink); background: rgba(255,255,255,.05); border: 1.5px solid rgba(255,255,255,.14); }
+  #consent .opt:hover { background: rgba(255,255,255,.12); border-color: var(--c1); }
+  #consent .opt b { font-size: 14px; margin-bottom: 2px; }
+  #consent .opt span { font-size: 11.5px; font-weight: 400; color: var(--muted); }
+  #consent .opt .cost { color: var(--ink); font-weight: 600; margin-top: 2px; }
+  #consent .opt.privacy b { color: #3de0a8; }
+  #consent .opt.current { border-color: var(--c1); background: rgba(255,255,255,.1); }
+  #consent .opt.privacy.current { border-color: #3de0a8; }
+  #consent .opt .last { position: absolute; top: 8px; right: 9px; font-size: 10px; font-style: normal; font-weight: 600;
+    padding: 1px 7px; border-radius: 999px; background: rgba(255,255,255,.12); color: var(--ink); display: none; }
+  #consent .opt.current .last { display: block; }
+  #consent small { font-size: 11px; line-height: 1.4; color: var(--muted); }
+  #consent .tip { font-size: 12px; padding: 7px 10px; border-radius: 10px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.09); }
+
+  /* privacy mode badge on the orb */
+  #shield { position: absolute; right: 2%; bottom: 2%; width: 26cqmin; height: 26cqmin; display: none;
+    filter: drop-shadow(0 0 2cqmin rgba(61,224,168,.55)); pointer-events: none; }
+  #shield svg { width: 100%; height: 100%; display: block; }
+  body.privacy #shield { display: block; }
   #setup label { font-size: 12.5px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #setup .row { display: flex; gap: 8px; }
   #task { flex: 1; min-width: 0; font: inherit; font-size: 15px; color: var(--ink); background: rgba(255,255,255,.07);
@@ -200,6 +219,7 @@
     </div>
     <span class="z">z</span><span class="z">z</span>
     <div id="err"></div>
+    <div id="shield"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#0f2b25" stroke="#3de0a8" stroke-width="1.6"/><path d="M12 5.2l5 1.9v3.9c0 3.4-2.1 5.8-5 6.9-2.9-1.1-5-3.5-5-6.9V7.1z" fill="#3de0a8"/><path d="M9.6 11.6l1.7 1.7 3.2-3.3" fill="none" stroke="#0f2b25" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
   </div>
 
 
@@ -227,11 +247,20 @@
   </div>
 
   <div id="consent">
-    <div class="kicker">Before we start</div>
-    <p>During a Pomodoro, Focus Orb checks your screen with OpenAI every 3 seconds. Nothing is saved on this PC.</p>
-    <button class="opt" type="button" data-mode="full">Full mode<span>Screenshot + window title · most accurate</span></button>
-    <button class="opt privacy" type="button" data-mode="privacy">Privacy mode<span>Only the window title, never screenshots · a bit less accurate</span></button>
-    <small>You can switch anytime. Password managers, private windows and banking are never looked at.</small>
+    <div class="kicker">Before you start · privacy and cost</div>
+    <h2>Focus Orb looks at your screen</h2>
+    <p>In full mode it sends a screenshot of every display to OpenAI every 3 seconds, about <b>500 screenshots per Pomodoro</b>.</p>
+    <ul>
+      <li><b>Everything visible goes along:</b> open chats and emails, documents, photos, other people's names and messages, your second screen.</li>
+      <li><b>It leaves your PC:</b> screenshots are processed on OpenAI's servers under their API data policy. Nothing is saved on this PC.</li>
+      <li><b>At work or university</b> you may not be allowed to share screen contents with an AI service.</li>
+    </ul>
+    <div class="opts">
+      <button class="opt" type="button" data-mode="full"><b>Full mode</b><span>Screenshot + window title</span><span>12 / 12 correct in tests</span><span class="cost">≈ $0.08 per Pomodoro</span><i class="last">Last used</i></button>
+      <button class="opt privacy" type="button" data-mode="privacy"><b>Privacy mode</b><span>Window title only, never screenshots</span><span>11 / 12 correct in tests</span><span class="cost">≈ $0.04 per Pomodoro</span><i class="last">Last used</i></button>
+    </div>
+    <p class="tip"><b>Wrong call?</b> When the orb pops out, click <b>This is work</b>. That app or site (on YouTube and the like: just that one video) counts as work for the rest of your task, and it's no longer sent to OpenAI.</p>
+    <small>Costs go to your own OpenAI account: 8 Pomodoros cost about $0.66 in full mode and $0.29 in privacy mode. Window titles can still reveal things like an email subject. Password managers, private windows and banking are never looked at in either mode.</small>
   </div>
 
   <form id="setup">
@@ -269,6 +298,7 @@
       document.body.style.setProperty('--sh', s.alertGeo.stageH + 'px');
     }
     document.body.className = [mode, happy || (s.summary && !uiAlert) ? 'happy' : '', noAnim ? 'noanim' : '',
+      s.mode === 'privacy' ? 'privacy' : '',
       s.phase === 'focus' ? 'focus' : s.phase === 'break' ? 'brk' : '',
       s.error && s.phase !== 'idle' ? 'has-err' : ''].join(' ');
   }
@@ -280,10 +310,11 @@
     if (s.drifting && (alertStep === 'off' || alertStep === 'leaving')) enterAlert();
     else if (!s.drifting && (alertStep === 'entering' || alertStep === 'on')) exitAlert();
     render();
-    $('orb').title = s.error || (s.phase === 'focus' ? `Focusing on: ${s.task}\nRight-click for options` :
+    $('orb').title = s.error || (s.phase === 'focus' ? `Focusing on: ${s.task}${s.mode === 'privacy' ? '\nPrivacy mode: window titles only, no screenshots' : ''}\nRight-click for options` :
       s.phase === 'break' ? 'Break time. Right-click for options' : '');
     $('setupErr').textContent = s.phase === 'idle' ? s.error : '';
     $('modeChip').textContent = s.mode === 'privacy' ? 'Privacy mode' : 'Full mode';
+    document.querySelectorAll('#consent .opt').forEach((b) => b.classList.toggle('current', b.dataset.mode === s.mode));
     $('modeChip').classList.toggle('privacy', s.mode === 'privacy');
     $('modeChip').hidden = !s.mode; // not shown in the demo
     // First run without an API key: ask for one (or offer the demo) instead of a task.

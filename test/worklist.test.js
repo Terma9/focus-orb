@@ -19,13 +19,21 @@ test('apps are remembered by exe name', () => {
 
 test('on YouTube only that one video is approved', () => {
   const key = workKey(chrome('(3) Electron tutorial: transparent windows - YouTube'));
-  assert.deepEqual(key, { kind: 'site', value: 'Electron tutorial: transparent windows - YouTube' });
+  assert.deepEqual(key, { kind: 'page', value: 'Electron tutorial: transparent windows - YouTube' });
   assert.ok(matchesWork(chrome('(5) Electron tutorial: transparent windows - YouTube'), key), 'unread count changed');
   assert.ok(!matchesWork(chrome('Funny cats - YouTube'), key), 'another video');
 });
 
-test('a YouTube home page cannot be approved', () => {
-  assert.equal(workKey(chrome('YouTube')), null);
+test('a YouTube home page can be approved, but only the home page itself', () => {
+  const key = workKey(chrome('YouTube'));
+  assert.deepEqual(key, { kind: 'page', value: 'YouTube' });
+  assert.ok(matchesWork(chrome('(2) YouTube'), key), 'home page with a notification count');
+  assert.ok(!matchesWork(chrome('Funny cats - YouTube'), key), 'not every video');
+});
+
+test('every browser and app window can be marked as work (the button is always offered)', () => {
+  for (const w of [chrome('YouTube'), chrome('Reddit - Dive into anything'), chrome('Home / X'), { title: 'Steam', app: 'steam' }])
+    assert.ok(workKey(w), JSON.stringify(w));
 });
 
 test('WorkList resets when the task changes and ignores duplicates', () => {

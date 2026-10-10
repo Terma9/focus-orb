@@ -63,7 +63,10 @@ const S = {
 };
 const settings = new Settings(app.getPath('userData'));
 const mode = () => settings.get('mode'); // 'full' | 'privacy'
-const needsConsent = () => !demo && !settings.get('privacyAcknowledged');
+// The privacy notice (what gets sent where, and what it costs) is shown at every start of the app,
+// with the last choice pre-selected. It's not shown again until the next start.
+let noticeDone = false;
+const needsConsent = () => !demo && !noticeDone;
 const drift = new DriftTracker(CFG);
 const stats = new SessionStats();
 const work = new WorkList();
@@ -161,6 +164,7 @@ function goIdle() {
 // First-run privacy notice and the mode switch (start panel label / right-click menu).
 function setPrivacyMode(next) {
   const first = needsConsent();
+  noticeDone = true;
   settings.set({ mode: next, privacyAcknowledged: true });
   log(`Mode: ${next === 'privacy' ? 'privacy (window titles only, no screenshots)' : 'full (screenshots + window titles)'}`);
   if (first && S.phase === 'idle') orb.setMode('setup');
@@ -331,7 +335,7 @@ if (!app.requestSingleInstanceLock()) {
   app.whenReady().then(() => {
     loadStoredKey();
     orb.create().webContents.on('did-finish-load', () => {
-      if (needsConsent()) orb.setMode('consent'); // first launch: privacy notice before anything is watched
+      if (needsConsent()) orb.setMode('consent'); // privacy notice before anything is watched
       publish();
       if (demo) demo.run({ orb, stats, startFocus, startBreak, closeSummary, endAlert, get state() { return S; } });
     });
