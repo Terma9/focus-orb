@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" font-family="Segoe UI, -apple-system, Helvetica, Arial, sans-serif">
+  <title>How Focus Orb decides when to call you out</title>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M1 1L9 5L1 9" fill="none" stroke="#9a94c8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+    <style>
+      .box { fill: #221d38; stroke: #8b7bff; stroke-width: 1.5; }
+      .ai { fill: #1c2440; stroke: #7aa2ff; }
+      .alert { fill: #3a1b2b; stroke: #ff6b81; }
+      .ok { fill: #16302b; stroke: #3de0a8; }
+      .t { fill: #f3f1ff; font-size: 15px; font-weight: 600; }
+      .s { fill: #b9b4dc; font-size: 12.5px; }
+      .pill { fill: #d9fff1; font-size: 12px; }
+      .lbl { fill: #9a94c8; font-size: 12px; font-weight: 600; }
+      .ln { fill: none; stroke: #9a94c8; stroke-width: 1.6; }
+    </style>
+  </defs>
+
+  <!-- row 1 -->
+  <rect class="box" x="20" y="40" width="200" height="64" rx="12"/>
+  <text class="t" x="120" y="66" text-anchor="middle">Every 3 s</text>
+  <text class="s" x="120" y="86" text-anchor="middle">during focus time</text>
+
+  <rect class="box" x="260" y="40" width="200" height="64" rx="12"/>
+  <text class="t" x="360" y="66" text-anchor="middle">Read active window</text>
+  <text class="s" x="360" y="86" text-anchor="middle">Win32 API via koffi</text>
+
+  <rect class="box" x="500" y="40" width="200" height="64" rx="12"/>
+  <text class="t" x="600" y="66" text-anchor="middle">Approved as work?</text>
+  <text class="s" x="600" y="86" text-anchor="middle">“This is work” list</text>
+
+  <rect class="box" x="740" y="40" width="200" height="64" rx="12"/>
+  <text class="t" x="840" y="66" text-anchor="middle">Screenshot displays</text>
+  <text class="s" x="840" y="86" text-anchor="middle">the orb hides itself</text>
+
+  <line class="ln" x1="220" y1="72" x2="256" y2="72" marker-end="url(#a)"/>
+  <line class="ln" x1="460" y1="72" x2="496" y2="72" marker-end="url(#a)"/>
+  <line class="ln" x1="700" y1="72" x2="736" y2="72" marker-end="url(#a)"/>
+  <text class="lbl" x="718" y="64" text-anchor="middle">no</text>
+
+  <!-- "yes": approved -->
+  <line class="ln" x1="600" y1="104" x2="600" y2="114" marker-end="url(#a)"/>
+  <rect class="ok" x="505" y="117" width="190" height="26" rx="13"/>
+  <text class="pill" x="600" y="134" text-anchor="middle">yes → work, no API call</text>
+
+  <!-- wrap to row 2 -->
+  <path class="ln" d="M840 104 V162 H120 V186" marker-end="url(#a)"/>
+
+  <!-- row 2 -->
+  <rect class="box ai" x="20" y="190" width="200" height="64" rx="12"/>
+  <text class="t" x="120" y="216" text-anchor="middle">OpenAI Decisions API</text>
+  <text class="s" x="120" y="236" text-anchor="middle">“clearly distracted?” → 0–1</text>
+
+  <rect class="box" x="260" y="190" width="200" height="64" rx="12"/>
+  <text class="t" x="360" y="216" text-anchor="middle">≥ 0.8 twice in a row</text>
+  <text class="s" x="360" y="236" text-anchor="middle">and for more than 5 s?</text>
+
+  <rect class="box alert" x="500" y="190" width="200" height="64" rx="12"/>
+  <text class="t" x="600" y="216" text-anchor="middle">Alert</text>
+  <text class="s" x="600" y="236" text-anchor="middle">fly out, grow, funny line</text>
+
+  <rect class="box" x="740" y="190" width="200" height="64" rx="12"/>
+  <text class="t" x="840" y="216" text-anchor="middle">You click</text>
+  <text class="s" x="840" y="236" text-anchor="middle">Back to work · This is work</text>
+
+  <line class="ln" x1="220" y1="222" x2="256" y2="222" marker-end="url(#a)"/>
+  <line class="ln" x1="460" y1="222" x2="496" y2="222" marker-end="url(#a)"/>
+  <text class="lbl" x="478" y="214" text-anchor="middle">yes</text>
+  <line class="ln" x1="700" y1="222" x2="736" y2="222" marker-end="url(#a)"/>
+
+  <!-- "no": stay calm -->
+  <line class="ln" x1="360" y1="254" x2="360" y2="264" marker-end="url(#a)"/>
+  <rect class="ok" x="265" y="267" width="190" height="26" rx="13"/>
+  <text class="pill" x="360" y="284" text-anchor="middle">no → stay calm, count resets</text>
+
+  <line class="ln" x1="840" y1="254" x2="840" y2="264" marker-end="url(#a)"/>
+  <rect class="ok" x="745" y="267" width="190" height="26" rx="13"/>
+  <text class="pill" x="840" y="284" text-anchor="middle">↺ 5 s grace, then checks go on</text>
+</svg>

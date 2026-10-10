@@ -77,19 +77,7 @@ Type what you're working on, press Enter, work. Right-click the orb to skip to t
 
 ## How it works
 
-```mermaid
-flowchart TD
-    A[Every 3 s during focus time] --> B[Read the active window<br/>Win32 API via koffi]
-    B --> C{Approved with<br/>This is work?}
-    C -- yes --> W[Counts as work<br/>no API call]
-    C -- no --> D[Screenshot every display<br/>orb hides itself from capture]
-    D --> E["OpenAI Decisions API<br/>predicate: clearly distracted? → 0…1"]
-    E --> F{"≥ 0.8, twice in a row,<br/>for more than 5 s?"}
-    F -- no --> W
-    F -- yes --> G[Alert: fly out, grow,<br/>funny line via Responses API]
-    G --> H[You click Back to work<br/>or This is work]
-    H --> A
-```
+<p align="center"><img src="assets/how-it-works.svg" width="900" alt="Every 3 s: read the active window; if approved as work, no API call; otherwise screenshot and ask the Decisions API whether you are clearly distracted; at 0.8 or more twice in a row for over 5 s, the orb alerts until you click Back to work or This is work"></p>
 
 | Piece | What it does |
 |---|---|
